@@ -9,6 +9,26 @@ const DEGREE = Math.PI/180;
 const sprite = new Image();
 sprite.src = "img/sprite.png";
 
+// LOAD AUDIO
+
+const SCORE_SOUND = new Audio();
+SCORE_SOUND.src = "audio/sfx_point.wav";
+
+
+const FLAP_SOUND = new Audio();
+FLAP_SOUND.src = "audio/sfx_flap.wav";
+
+
+const HIT_SOUND = new Audio();
+HIT_SOUND.src = "audio/sfx_hit.wav";
+
+
+const SWOOSHING_SOUND = new Audio();
+SWOOSHING_SOUND.src = "audio/sfx_swooshing.wav";
+
+
+const DIE_SOUND = new Audio();
+DIE_SOUND.src = "audio/sfx_die.wav";
 
 
 // GAME STATE
@@ -36,9 +56,11 @@ gamecvs.addEventListener("click", function(evt) {
     switch(state.current) {
         case state.getReady:
             state.current = state.game;
+            SWOOSHING_SOUND.play();
             break;
         case state.game:
             bird.flap();
+            FLAP_SOUND.play();
             break;
         case state.over:
             let rect = gamecvs.getBoundingClientRect();
@@ -65,9 +87,11 @@ gamecvs.addEventListener("keydown", function(evt) {
         switch(state.current) {
             case state.getReady:
                 state.current = state.game;
+                SWOOSHING_SOUND.play();
                 break;
             case state.game:
                 bird.flap();
+                FLAP_SOUND.play();
                 break;
             case state.over:
                 pipes.reset();
@@ -184,6 +208,7 @@ const bird = {
 
                 if (state.current === state.game) {
                     state.current = state.over;
+                    DIE_SOUND.play();
                 }
             }
 
@@ -237,6 +262,8 @@ const gameOver = {
     }
 }
 
+
+// PIPES
 
 const pipes = {
     position: [],
@@ -294,6 +321,7 @@ const pipes = {
             if (bird.x + bird.radius > pipe.x && bird.x - bird.radius < pipe.x + this.w &&
                 bird.y + bird.radius > pipe.y && bird.y - bird.radius < pipe.y + this.h) {
                     state.current = state.over;
+                    HIT_SOUND.play();
             }
 
 
@@ -302,6 +330,7 @@ const pipes = {
             if (bird.x + bird.radius > pipe.x && bird.x - bird.radius < pipe.x + this.w &&
                 bird.y + bird.radius > bottomPipeYPos && bird.y - bird.radius < bottomPipeYPos + this.h) {
                     state.current = state.over;
+                    HIT_SOUND.play();
             }
 
 
@@ -314,6 +343,7 @@ const pipes = {
                 this.position.shift();
 
                 score.value += 1;
+                SCORE_SOUND.play();
                 score.best = Math.max(score.value, score.best);
                 localStorage.setItem("best", score.best);
             }
